@@ -1,0 +1,8 @@
+{
+  "_mock_biz_id": "demo",
+  "service_name": "demo-service-1",
+  "scene_type": "usability_warning",
+  "timestamp": 1745742000,
+  "alert_rule_name": "CPU Usage Alert",
+  "alert_level": "P1"
+}

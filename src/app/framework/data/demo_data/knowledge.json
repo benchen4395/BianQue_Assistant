@@ -1,0 +1,6 @@
+[
+  {
+    "service_name": "demo-service-1",
+    "customized_feedback": "When CPU usage spikes abnormally: if a recent code deployment is detected and the stack trace contains AsyncCall-related functions, this is typically a normal restart during the deployment process and can be ignored. Otherwise, cross-reference QPS trends and slow query logs — if QPS shows no significant change but CPU remains high, escalate to the service owner for code-level investigation."
+  }
+]

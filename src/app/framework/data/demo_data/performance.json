@@ -1,0 +1,39 @@
+{
+  "demo-service-1": {
+    "cpu": {
+      "current": 85.3,
+      "1d_ago": 42.1,
+      "7d_ago": 40.5,
+      "unit": "%",
+      "description": "CPU usage"
+    },
+    "memory": {
+      "current": 67.2,
+      "1d_ago": 64.1,
+      "7d_ago": 63.0,
+      "unit": "%",
+      "description": "Memory usage"
+    },
+    "qps": {
+      "current": 1250,
+      "1d_ago": 1180,
+      "7d_ago": 1200,
+      "unit": "req/s",
+      "description": "Requests per second"
+    },
+    "latency_ms": {
+      "current": 45.2,
+      "1d_ago": 38.1,
+      "7d_ago": 37.5,
+      "unit": "ms",
+      "description": "Average request latency"
+    },
+    "availability": {
+      "current": 0.9989,
+      "1d_ago": 0.9998,
+      "7d_ago": 0.9997,
+      "unit": "ratio",
+      "description": "Service availability (success rate)"
+    }
+  }
+}

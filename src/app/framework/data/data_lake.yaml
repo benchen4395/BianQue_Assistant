@@ -1,0 +1,42 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Data Lake — Data Capability Pool Configuration
+#
+# This file is the "Single Source of Truth" for data capabilities:
+#   1. Read by data_provider_registry.py at startup, auto-registers register(type, handler)
+#   2. Used as input when LLM generates Skills, to understand available data capabilities
+#
+# Field descriptions:
+#   type          — unique identifier; referenced in Skill MD LoadDataSchema via this field
+#   handler       — data fetch function name (must be defined in app/framework/data/providers.py)
+#   description   — one-line description of the data capability's purpose
+#   params        — parameters the function accepts and their schemas (medium granularity)
+#   context_keys  — runtime context variables the function depends on
+#   return_type   — return value type
+#   return_default— default return value when fetch fails
+#
+# Maintenance rules:
+#   - When adding a data capability: first implement the handler function in providers.py,
+#     then add the corresponding entry in this file
+#   - When removing a data capability: delete both this file entry and the handler in providers.py
+#   - At startup: validates that each handler in YAML exists and is callable in code
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: "1.0.0"
+
+# See data_lake_summary.md for the index of all integrated data capabilities
+
+capabilities:
+
+  # ── 0. Demo Provider ─────────────────────────────────────────────────────
+  # Demo provider for end-to-end testing; no external system dependency
+  - type: demo
+    handler: _fetch_data_demo
+    description: "Demo provider for end-to-end testing, returns basic info extracted from params/context"
+    params:
+      message:
+        type: "str"
+        default: ""
+        description: "Custom message text (optional)"
+    context_keys: [service_name, timestamp, request_id]
+    return_type: "dict"
+    return_default: "{}"

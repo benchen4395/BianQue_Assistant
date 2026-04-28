@@ -1,0 +1,18 @@
+---
+name: biz-catalog-knowledge
+description: 业务目录映射知识库，记录运维归属与服务负责人的关联关系，供 InputParser 运行时判断 business_id。
+version: 1.0.0
+tags: [catalog, biz-mapping]
+biz_mapping:
+  demo:
+    cname: 演示业务
+    owners: [demo_user_name]
+---
+
+## 概述
+
+本文件是业务目录映射知识库，**不对应任何具体 Skill 执行流程**，仅作为 `InputParser._resolve_business_id` 的静态配置来源。
+
+`InputParser` 在运行时通过 业务自行映射的规则 查询相关业务的映射关系，确定 `business_id`。
+
+---
