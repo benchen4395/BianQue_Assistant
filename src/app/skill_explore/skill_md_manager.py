@@ -214,7 +214,11 @@ def _render_skill_md(skill: SkillDoc) -> str:
     tags_inline = "[" + ", ".join(skill.tags) + "]"
     lines.append("---")
     lines.append(f"name: {skill.name}")
-    lines.append(f"description: {skill.description}")
+    desc_val = skill.description
+    # Quote the value if it contains YAML-special characters (colon, bracket, etc.)
+    if any(ch in desc_val for ch in (":", "[", "]", "{", "}", "#", "&", "*", "!", "|", ">", "'", '"', "%", "@", "`")):
+        desc_val = '"' + desc_val.replace('"', '\\"') + '"'
+    lines.append(f"description: {desc_val}")
     lines.append(f"version: {skill.version}")
     lines.append(f"business: {biz_lines}")
     lines.append(f"tags: {tags_inline}")

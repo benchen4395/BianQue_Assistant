@@ -148,9 +148,29 @@ def _run_skill_flow(
         )
         return {"payload": {}, "conclusion": "", "raw_output": "", "success": False}
 
-    result = execute_skill(
-        skill=skill,
-        parsed_input=parsed
-    )
+    # ── Step 3: Execute Skill with conclusion validation + retry ─────────────────
+    _VALID_CONCLUSIONS = {"需要关注", "不需要关注", "Needs attention", "No attention needed"}
+    _MAX_EXEC_RETRIES = 3
+
+    result = None
+    for attempt in range(1, _MAX_EXEC_RETRIES + 1):
+        info_log(f"\n{_SEP}\n [Step 3] Execute Skill — attempt {attempt}/{_MAX_EXEC_RETRIES}\n{_SEP}")
+        result = execute_skill(skill=skill, parsed_input=parsed)
+        conclusion = result.get("conclusion", "")
+        # Check whether conclusion contains a valid verdict
+        if any(v in conclusion for v in _VALID_CONCLUSIONS):
+            info_log(f"[Step 3] Execution succeeded — conclusion=[{conclusion!r}] attempt={attempt}")
+            break
+        # Invalid conclusion: log and retry (unless last attempt)
+        if attempt < _MAX_EXEC_RETRIES:
+            error_log(
+                f"skill_explore_main: [{request_id}] Execution attempt {attempt} "
+                f"returned invalid conclusion=[{conclusion!r}], retrying..."
+            )
+        else:
+            error_log(
+                f"skill_explore_main: [{request_id}] All {_MAX_EXEC_RETRIES} execution attempts "
+                f"returned invalid conclusion=[{conclusion!r}], returning last result"
+            )
 
     return result

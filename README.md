@@ -1,13 +1,13 @@
-# Bianque System
+# BianQue Assistant
 
 <p align="left">
         <a href="README_CN.md">中文</a> | English
 </p>
 <br>
 
-> Bianque System: An LLM-driven Intelligent Skill Execution Framework for SRE/Operations
+> BianQue Assistant: An LLM-driven Intelligent Skill Execution Framework for SRE/Operations
 
-Bianque System is an open-source operations AI framework. Its core idea is: **describe analysis Skills as files, let LLM auto-generate and execute them, with feedback-driven updates — covering alert analysis, inspection, and change guard scenarios**.
+BianQue Assistant is an open-source operations AI framework. Its core idea is: **describe analysis Skills as files, let LLM auto-generate and execute them, with feedback-driven updates — covering alert analysis, inspection, and change guard scenarios**.
 
 The framework runs as a Flask service. It is not tied to any internal data source or specific LLM. All integration points are defined as interfaces — developers only need to implement their own data fetch logic and LLM connection to run the full pipeline.
 
@@ -25,6 +25,9 @@ The framework runs as a Flask service. It is not tied to any internal data sourc
 
 ```
 BianQue_Assistant/
+├── run_demo.sh                              # One-click demo launcher script
+├── run_flask.sh                             # One-click Flask service launcher script
+├── set_env.sh                               # LLM environment variable config template
 ├── run_demo.py                              # Local demo script (no Flask needed)
 ├── requirements.txt
 ├── src/
@@ -75,7 +78,7 @@ BianQue_Assistant/
 ## Quick Start
 
 > **Just set the LLM environment variables and run `run_demo.py` to execute the full pipeline on mock data — no additional development needed.**
-> Steps 3–5 below are for integrating your own system capabilities and are optional.
+> Steps 4–7 below are for integrating your own system capabilities and are optional.
 
 ### 1. Install Dependencies
 
@@ -86,19 +89,30 @@ pip3 install -r requirements.txt
 
 ### 2. Configure LLM (Required)
 
-The framework includes a built-in `OpenAICompatibleClient`. Set environment variables to use it:
+The framework includes a built-in `OpenAICompatibleClient`. Edit `set_env.sh` with your credentials:
 
 ```bash
+# set_env.sh
 export LLM_API_BASE="https://your-api-endpoint/v1"
 export LLM_API_KEY="your_api_key"
 export LLM_MODEL="your_model_name"   # default: qwen3
 ```
 
-Then run the demo immediately:
+### 3. Run
+
+**Demo** (local, no Flask needed):
 
 ```bash
-python run_demo.py
+bash run_demo.sh
 ```
+
+**Flask service**:
+
+```bash
+bash run_flask.sh
+```
+
+Both scripts automatically load `set_env.sh` if the env vars are not already exported.
 
 To use a custom LLM backend, subclass `BaseLLMClient` and register it at startup in `main.py`:
 
@@ -116,7 +130,7 @@ set_llm_client(MyLLMClient())
 
 The following steps are for integrating the framework with your own system capabilities:
 
-### 3. Implement Request Parsing (Integrate Your Alert System)
+### 4. Implement Request Parsing (Integrate Your Alert System)
 
 Edit `src/app/skill_explore/input_parser.py` and implement `parse_warning()` to parse raw alert requests into `ParsedInput`.
 
@@ -159,7 +173,7 @@ Demo request body (`src/app/framework/data/demo_data/mock_alert_request.json`):
 }
 ```
 
-### 4. Connect Data Sources (Integrate Your Monitoring Data)
+### 5. Connect Data Sources (Integrate Your Monitoring Data)
 
 Implement a data fetch function in `src/app/framework/data/providers.py`. The demo function `_fetch_data_demo()` reads from local `demo_data/performance.json`. For production, replace it with calls to your monitoring system, time-series database, or metrics API.
 
@@ -187,7 +201,7 @@ capabilities:
     return_default: "{}"
 ```
 
-### 5. Connect Knowledge Base (Integrate Your Knowledge System)
+### 6. Connect Knowledge Base (Integrate Your Knowledge System)
 
 Implement the `get_knowledge()` interface in `src/app/framework/knowledge/get_knowlege.py` to connect your own knowledge store (e.g., vector database, BM25 search, RAG pipeline).
 
@@ -195,11 +209,10 @@ The demo implementation reads from `demo_data/knowledge.json` and returns `custo
 
 Function signature must remain: `(service_name: str, topk: int) -> str`
 
-### 6. Start the Flask Service
+### 7. Start the Flask Service
 
 ```bash
-cd BianQue_Assistant/src
-python main.py
+bash run_flask.sh
 ```
 
 ---
@@ -209,7 +222,7 @@ python main.py
 After setting the LLM environment variables, run the local script to execute the full pipeline on mock data (no Flask server needed):
 
 ```bash
-python run_demo.py
+bash run_demo.sh
 ```
 
 Example output:

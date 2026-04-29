@@ -1,13 +1,13 @@
-# 扁鹊
+# 扁鹊助手
 
 <p align="left">
         中文 | <a href="README.md">English</a>
 </p>
 <br>
 
-> 扁鹊：面向运维场景的 LLM 驱动智能 Skill 执行框架
+> 扁鹊助手：面向运维场景的 LLM 驱动智能 Skill 执行框架
 
-扁鹊是一个开源的运维 AI 框架，核心思路是：**以文件描述运维分析 Skill（技能），由 LLM 驱动自动生成和执行,支持反馈更新，覆盖告警分析、巡检、阻断等场景**。
+扁鹊助手是一个开源的运维 AI 框架，核心思路是：**以文件描述运维分析 Skill（技能），由 LLM 驱动自动生成和执行,支持反馈更新，覆盖告警分析、巡检、阻断等场景**。
 
 框架基于Flask启动运行，框架本身不绑定任何内部数据源或特定 LLM，所有接入点均以接口形式提供，开发者只需实现自己的数据获取逻辑与 LLM 接入即可跑通完整链路。
 
@@ -25,6 +25,9 @@
 
 ```
 BianQue_Assistant/
+├── run_demo.sh                              # 一键启动 Demo 脚本
+├── run_flask.sh                             # 一键启动 Flask 服务脚本
+├── set_env.sh                               # LLM 环境变量配置模板
 ├── run_demo.py                              # 本地 Demo 运行脚本（无需启动 Flask）
 ├── requirements.txt
 ├── src/
@@ -75,7 +78,7 @@ BianQue_Assistant/
 ## 快速开始
 
 > **只需配置 LLM 环境变量，即可通过 `run_demo.py` 在 mock 数据下运行完整系统，无需任何额外开发。**
-> 以下步骤 3~5 是将框架接入自有系统能力的工作，按需实现。
+> 以下步骤 4~7 是将框架接入自有系统能力的工作，按需实现。
 
 ### 1. 安装依赖
 
@@ -86,19 +89,30 @@ pip3 install -r requirements.txt
 
 ### 2. 配置 LLM（必须）
 
-框架内置 `OpenAICompatibleClient`，通过环境变量配置即可使用：
+框架内置 `OpenAICompatibleClient`，编辑 `set_env.sh` 填入配置即可：
 
 ```bash
+# set_env.sh
 export LLM_API_BASE="https://your-api-endpoint/v1"
 export LLM_API_KEY="your_api_key"
 export LLM_MODEL="your_model_name"   # 默认 qwen3
 ```
 
-配置完成后即可直接运行 Demo：
+### 3. 启动
+
+**Demo 模式**（本地直接运行，无需 Flask）：
 
 ```bash
-python run_demo.py
+bash run_demo.sh
 ```
+
+**Flask 服务模式**：
+
+```bash
+bash run_flask.sh
+```
+
+两个脚本均会自动加载 `set_env.sh`（如果 LLM 环境变量未提前导出）。
 
 若需接入自定义 LLM 后端，继承 `BaseLLMClient` 并在 `main.py` 启动时注册：
 
@@ -116,7 +130,7 @@ set_llm_client(MyLLMClient())
 
 以下步骤用于将框架接入自己的系统能力，按需实现：
 
-### 3. 实现请求解析（接入自有告警系统）
+### 4. 实现请求解析（接入自有告警系统）
 
 编辑 `src/app/skill_explore/input_parser.py`，实现 `parse_warning()` 方法，将原始告警请求解析为 `ParsedInput`。
 
@@ -159,7 +173,7 @@ Demo 请求体示例（`src/app/framework/data/demo_data/mock_alert_request.json
 }
 ```
 
-### 4. 接入数据源（接入自有监控数据）
+### 5. 接入数据源（接入自有监控数据）
 
 在 `src/app/framework/data/providers.py` 中实现数据获取函数。Demo 函数 `_fetch_data_demo()` 从 `demo_data/performance.json` 读取本地数据，接入真实系统时需替换为监控系统、时序数据库或指标 API 调用。
 
@@ -187,7 +201,7 @@ capabilities:
     return_default: "{}"
 ```
 
-### 5. 接入知识库（接入自有知识系统）
+### 6. 接入知识库（接入自有知识系统）
 
 在 `src/app/framework/knowledge/get_knowlege.py` 中实现 `get_knowledge()` 接口，对接自己的知识库（如向量数据库、BM25 检索、RAG 流水线等）。
 
@@ -195,11 +209,10 @@ Demo 实现从 `demo_data/knowledge.json` 读取本地数据，按 `service_name
 
 函数签名必须保持不变：`(service_name: str, topk: int) -> str`
 
-### 6. 启动 Flask 服务
+### 7. 启动 Flask 服务
 
 ```bash
-cd BianQue_Assistant/src
-python main.py
+bash run_flask.sh
 ```
 
 ---
@@ -209,7 +222,7 @@ python main.py
 配置好 LLM 环境变量后，直接运行本地脚本即可跑通完整链路（使用 mock 数据，无需启动 Flask 服务）：
 
 ```bash
-python run_demo.py
+bash run_demo.sh
 ```
 
 运行效果：
