@@ -17,7 +17,7 @@ The framework runs as a Flask service. It is not tied to any internal data sourc
 
 ## Key Features
 
-- See paper: Bian Que: An Agentic Framework with Flexible Skill Arrangement for Online System Operations
+- See paper: [Bian Que: An Agentic Framework with Flexible Skill Arrangement for Online System Operations](https://arxiv.org/abs/2604.26805)
 
 ---
 
