@@ -17,7 +17,7 @@
 
 ## 核心特性
 
-- 见论文：Bian Que: An Agentic Framework with Flexible Skill Arrangement for Online System Operations
+- 见论文：[Bian Que: An Agentic Framework with Flexible Skill Arrangement for Online System Operations](https://arxiv.org/abs/2604.26805)
 
 ---
 
